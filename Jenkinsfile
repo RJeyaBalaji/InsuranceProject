@@ -17,7 +17,7 @@ node{
     
     stage('git code clone'){
         echo 'cloning the code from git repository'
-        git 'https://github.com/Sivaops7/insure-me.git'
+        git 'https://github.com/RJeyaBalaji/InsuranceProject.git'
         
     }
     
@@ -28,13 +28,13 @@ node{
     }
     
     stage('publish test reports'){
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/var/lib/jenkins/workspace/Capstone-Project-Live-Demo/target/surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/var/lib/jenkins/workspace/InsuranceProject/target/surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
     }
     
     stage('Containerize the application'){
         try{
         echo 'Creating Docker image'
-        sh "${dockerCMD} build -t sivaops7/insure-me:${tagName} ."
+        sh "${dockerCMD} build -t jeyabalaji/insure-me:${tagName} ."
         }
         catch(Exception e){
             echo 'Exception occur in stage Dcker Build'
@@ -42,15 +42,15 @@ node{
             emailext body: '''Hello,
             We are having issue in Docker Build command .can you please look into the same
             Thanks 
-            Jenkins Admin''', subject: 'Attention:${JOB_NAME} is failed.please into the ${BUILD_NAME}', to: 'sivabalana91@gmail.com'
+            Jenkins Admin''', subject: 'Attention:${JOB_NAME} is failed.please into the ${BUILD_NAME}', to: 'rjeyabalajirjb10@gmail.com'
         }
     }
     
     stage('Pushing it ot the DockerHub'){
         echo 'Pushing the docker image to DockerHub'
         withCredentials([string(credentialsId: 'dockerpassword', variable: 'dockerpassword')]) { 
-                sh "${dockerCMD} login -u sivaops7 -p ${dockerPassword}"
-                sh "${dockerCMD} push sivaops7/insure-me:${tagName}"
+                sh "${dockerCMD} login -u jeyabalaji -p ${dockerpassword}"
+                sh "${dockerCMD} push jeyabalaji/insure-me:${tagName}"
         }   
       
     }
